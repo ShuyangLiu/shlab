@@ -201,7 +201,7 @@ void eval(char *cmdline)
             }
             
             if (execvp(argv[0], argv) < 0) {
-                printf("%s: Command not found.\n", argv[0]);
+                printf("%s: Command not found\n", argv[0]);
                 exit(0);
             }
             
