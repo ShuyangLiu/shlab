@@ -125,7 +125,11 @@ int main(int argc, char **argv)
     Signal(SIGCHLD, sigchld_handler);  /* Terminated or stopped child */
 
     /* This one provides a clean way to kill the shell */
-    Signal(SIGQUIT, sigquit_handler); 
+    Signal(SIGQUIT, sigquit_handler);
+
+    /* Ignore SIGTTOU and SIGTTIN */
+    Signal(SIGTTOU, SIG_IGN);
+    Signal(SIGTTIN, SIG_IGN);
 
     /* Initialize the job list */
     initjobs(jobs);
