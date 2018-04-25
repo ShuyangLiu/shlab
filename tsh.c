@@ -177,14 +177,17 @@ void eval(char *cmdline)
     char *argv[MAXARGS]; /* argv for execve() */
 
     bg = parseline(cmdline, argv);
-    
+   
+
+    // Make a signal mask
     sigset_t mask;
     sigemptyset(&mask);
     sigaddset(&mask, SIGCHLD);
 
     if(!builtin_cmd(argv)) {
-    
-    	sigprocmask(SIG_BLOCK, &mask, 0); // block sigchild 
+
+        // block sigchild signal
+    	sigprocmask(SIG_BLOCK, &mask, 0);  
 
         if ((pid = fork()) == 0) {
             // Child Process 
@@ -207,12 +210,13 @@ void eval(char *cmdline)
             // Foreground process
             addjob(jobs, pid, FG, cmdline);
         } else {
-            //Background process
+            // Background process
             addjob(jobs, pid, BG, cmdline);
             printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
         }
-        
-        sigprocmask(SIG_UNBLOCK, &mask, 0);		/* Parent unblocks SIGCHLD */
+       
+        // unblock sigchild signal
+        sigprocmask(SIG_UNBLOCK, &mask, 0);		
         waitfg(pid);
     }
 
@@ -319,7 +323,6 @@ void do_bgfg(char **argv)
         return;
     }
 
-    
     int job_id;
     int pid;
     struct job_t * selected_job; 
@@ -450,7 +453,7 @@ void sigint_handler(int sig)
     } else if(fg_pid < 0) {
         perror("fgpid");
     } else {
-        // send a signal to foreground process
+        // send a signal to foreground process group
         kill(-fg_pid, SIGINT);
     }
 
